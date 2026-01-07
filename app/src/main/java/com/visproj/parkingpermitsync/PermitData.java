@@ -1,5 +1,6 @@
 package com.visproj.parkingpermitsync;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 public class PermitData {
@@ -44,9 +45,6 @@ public class PermitData {
     }
 
     public String toJson() {
-        return String.format(
-            "{\"permitNumber\":\"%s\",\"plateNumber\":\"%s\",\"validFrom\":\"%s\",\"validTo\":\"%s\",\"barcodeValue\":\"%s\",\"barcodeLabel\":\"%s\"}",
-            permitNumber, plateNumber, validFrom, validTo, barcodeValue, barcodeLabel
-        );
+        return new Gson().toJson(this);
     }
 }
