@@ -262,13 +262,14 @@ public class BleGattService extends Service {
                 if (offset == 0 && permit != null) {
                     // Check if permit is different from last synced
                     String lastSyncedPermit = repository.getDisplayPermitNumber();
-                    boolean isNewPermit = lastSyncedPermit == null ||
+                    // Only consider it "new" if we have a previous record AND it differs
+                    boolean isNewPermit = lastSyncedPermit != null &&
                         !lastSyncedPermit.equals(permit.permitNumber);
 
                     repository.setDisplayPermit(permit);
 
                     // Show notification if:
-                    // - New permit (always notify)
+                    // - New permit (permit number actually changed)
                     // - Manual sync (button press) or force sync (long press) - always notify
                     byte syncType = pendingSyncType;
                     boolean isManualSync = syncType == SYNC_TYPE_MANUAL || syncType == SYNC_TYPE_FORCE;
