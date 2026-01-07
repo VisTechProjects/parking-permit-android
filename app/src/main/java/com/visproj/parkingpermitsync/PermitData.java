@@ -44,6 +44,16 @@ public class PermitData {
         return permitNumber != null && !permitNumber.isEmpty();
     }
 
+    // Check all required fields for BLE transfer
+    public boolean isComplete() {
+        return permitNumber != null && !permitNumber.isEmpty()
+            && plateNumber != null && !plateNumber.isEmpty()
+            && validFrom != null && !validFrom.isEmpty()
+            && validTo != null && !validTo.isEmpty()
+            && barcodeValue != null && !barcodeValue.isEmpty()
+            && barcodeLabel != null && !barcodeLabel.isEmpty();
+    }
+
     public String toJson() {
         return new Gson().toJson(this);
     }

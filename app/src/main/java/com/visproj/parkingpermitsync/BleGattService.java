@@ -253,6 +253,11 @@ public class BleGattService extends Service {
 
                 Log.d(TAG, "Permit read request, sending " + data.length + " bytes");
 
+                // Warn if permit data is incomplete (ESP32 will reject it)
+                if (permit != null && !permit.isComplete()) {
+                    Log.w(TAG, "WARNING: Permit data is incomplete - ESP32 may reject");
+                }
+
                 // Show notification and record sync time on first chunk (offset 0)
                 if (offset == 0 && permit != null) {
                     // Check if permit is different from last synced
