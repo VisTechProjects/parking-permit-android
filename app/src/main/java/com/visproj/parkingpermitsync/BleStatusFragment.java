@@ -83,6 +83,7 @@ public class BleStatusFragment extends Fragment {
                 case BleGattService.ACTION_PERMIT_READ:
                     showConnectionStatus("Display updating...", "#4caf50");
                     btnUpdateDisplay.setText("Updating...");
+                    boolean isNewPermit = intent.getBooleanExtra("isNewPermit", false);
                     handler.postDelayed(() -> {
                         hideConnectionStatus();
                         btnUpdateDisplay.setEnabled(true);
@@ -94,9 +95,14 @@ public class BleStatusFragment extends Fragment {
                         }
                         updateUI();
                         PermitData p = repository.getPermit();
-                        String msg = p != null && p.permitNumber != null
-                            ? "Synced to display: " + p.permitNumber
-                            : "Display updated!";
+                        String msg;
+                        if (p != null && p.permitNumber != null) {
+                            msg = isNewPermit
+                                ? "New permit synced: " + p.permitNumber
+                                : "Synced to display: " + p.permitNumber;
+                        } else {
+                            msg = "Display updated!";
+                        }
                         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
                     }, 2000);
                     break;

@@ -288,7 +288,7 @@ public class BleGattService extends Service {
 
                     // Reset sync type after handling
                     pendingSyncType = SYNC_TYPE_AUTO;
-                    sendBroadcast(ACTION_PERMIT_READ);
+                    sendBroadcast(ACTION_PERMIT_READ, isNewPermit);
                 }
 
                 try {
@@ -353,6 +353,12 @@ public class BleGattService extends Service {
 
     private void sendBroadcast(String action) {
         Intent intent = new Intent(action);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void sendBroadcast(String action, boolean isNewPermit) {
+        Intent intent = new Intent(action);
+        intent.putExtra("isNewPermit", isNewPermit);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
