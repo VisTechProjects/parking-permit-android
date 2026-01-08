@@ -34,6 +34,9 @@ import java.util.Locale;
 
 public class BleStatusFragment extends Fragment {
 
+    private static final int COLOR_BLUE = 0xFF2196F3;
+    private static final int COLOR_WHITE = 0xFFFFFFFF;
+
     private TextView tvStatus;
     private TextView tvPermitNumber;
     private TextView tvPermitPrice;
@@ -75,12 +78,12 @@ public class BleStatusFragment extends Fragment {
                 case BleGattService.ACTION_DEVICE_CONNECTED:
                     showConnectionStatus("Display connected", "#ff9800");
                     // Also update warning banner button
-                    btnUpdateDisplay.setEnabled(false);
+                    setButtonEnabled(btnUpdateDisplay, false, COLOR_WHITE);
                     btnUpdateDisplay.setText("Connecting...");
                     break;
                 case BleGattService.ACTION_DEVICE_DISCONNECTED:
                     hideConnectionStatus();
-                    btnUpdateDisplay.setEnabled(true);
+                    setButtonEnabled(btnUpdateDisplay, true, COLOR_WHITE);
                     btnUpdateDisplay.setText("Update");
                     updateUI();
                     break;
@@ -90,7 +93,7 @@ public class BleStatusFragment extends Fragment {
                     boolean isNewPermit = intent.getBooleanExtra("isNewPermit", false);
                     handler.postDelayed(() -> {
                         hideConnectionStatus();
-                        btnUpdateDisplay.setEnabled(true);
+                        setButtonEnabled(btnUpdateDisplay, true, COLOR_WHITE);
                         btnUpdateDisplay.setText("Update");
                         // Save the permit as display permit
                         PermitData permit = repository.getPermit();
@@ -108,7 +111,7 @@ public class BleStatusFragment extends Fragment {
                             msg = "Display updated!";
                         }
                         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
-                    }, 2000);
+                    }, 4000);
                     break;
             }
         }
@@ -208,7 +211,7 @@ public class BleStatusFragment extends Fragment {
     }
 
     private void syncNow() {
-        btnSync.setEnabled(false);
+        setButtonEnabled(btnSync, false, COLOR_BLUE);
         tvStatus.setText("Syncing from GitHub...");
         setStatusIndicatorColor("#ff9800");
 
@@ -217,7 +220,7 @@ public class BleStatusFragment extends Fragment {
             @Override
             public void onSuccess(PermitData permit, boolean isNew) {
                 if (!isAdded()) return;
-                btnSync.setEnabled(true);
+                setButtonEnabled(btnSync, true, COLOR_BLUE);
                 tvStatus.setText("BLE Server Running");
                 setStatusIndicatorColor("#4caf50");
                 updateUI();
@@ -229,7 +232,7 @@ public class BleStatusFragment extends Fragment {
             @Override
             public void onError(String error) {
                 if (!isAdded()) return;
-                btnSync.setEnabled(true);
+                setButtonEnabled(btnSync, true, COLOR_BLUE);
                 tvStatus.setText("Sync failed");
                 setStatusIndicatorColor("#f44336");
             }
@@ -261,8 +264,8 @@ public class BleStatusFragment extends Fragment {
     }
 
     private void updateDisplay(boolean force) {
-        btnSync.setEnabled(false);
-        btnUpdateDisplay.setEnabled(false);
+        setButtonEnabled(btnSync, false, COLOR_BLUE);
+        setButtonEnabled(btnUpdateDisplay, false, COLOR_WHITE);
         btnUpdateDisplay.setText("Updating...");
         tvSyncStatus.setVisibility(View.VISIBLE);
         tvSyncStatus.setText(force ? "Force updating display..." : "Scanning for display...");
@@ -277,8 +280,8 @@ public class BleStatusFragment extends Fragment {
             @Override
             public void onSuccess() {
                 if (!isAdded()) return;
-                btnSync.setEnabled(true);
-                btnUpdateDisplay.setEnabled(true);
+                setButtonEnabled(btnSync, true, COLOR_BLUE);
+                setButtonEnabled(btnUpdateDisplay, true, COLOR_WHITE);
                 btnUpdateDisplay.setText("Update");
                 tvSyncStatus.setVisibility(View.GONE);
 
@@ -297,8 +300,8 @@ public class BleStatusFragment extends Fragment {
             @Override
             public void onError(String error) {
                 if (!isAdded()) return;
-                btnSync.setEnabled(true);
-                btnUpdateDisplay.setEnabled(true);
+                setButtonEnabled(btnSync, true, COLOR_BLUE);
+                setButtonEnabled(btnUpdateDisplay, true, COLOR_WHITE);
                 btnUpdateDisplay.setText("Update");
                 tvSyncStatus.setText(error);
                 tvSyncStatus.setTextColor(android.graphics.Color.parseColor("#f44336"));
@@ -317,6 +320,16 @@ public class BleStatusFragment extends Fragment {
     private void setStatusIndicatorColor(String color) {
         GradientDrawable drawable = (GradientDrawable) statusIndicator.getBackground();
         drawable.setColor(android.graphics.Color.parseColor(color));
+    }
+
+    private void setButtonEnabled(Button button, boolean enabled, int enabledColor) {
+        button.setEnabled(enabled);
+        if (enabled) {
+            button.setBackgroundTintList(android.content.res.ColorStateList.valueOf(enabledColor));
+        } else {
+            button.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                android.graphics.Color.parseColor("#666666")));
+        }
     }
 
     public void setBleRunning() {
@@ -341,8 +354,8 @@ public class BleStatusFragment extends Fragment {
     }
 
     private void updateDisplayWithCallback(boolean force) {
-        btnSync.setEnabled(false);
-        btnUpdateDisplay.setEnabled(false);
+        setButtonEnabled(btnSync, false, COLOR_BLUE);
+        setButtonEnabled(btnUpdateDisplay, false, COLOR_WHITE);
         btnUpdateDisplay.setText("Updating...");
         tvSyncStatus.setVisibility(View.VISIBLE);
         tvSyncStatus.setText(force ? "Force updating display..." : "Scanning for display...");
@@ -357,8 +370,8 @@ public class BleStatusFragment extends Fragment {
             @Override
             public void onSuccess() {
                 if (!isAdded()) return;
-                btnSync.setEnabled(true);
-                btnUpdateDisplay.setEnabled(true);
+                setButtonEnabled(btnSync, true, COLOR_BLUE);
+                setButtonEnabled(btnUpdateDisplay, true, COLOR_WHITE);
                 btnUpdateDisplay.setText("Update");
                 tvSyncStatus.setVisibility(View.GONE);
 
@@ -377,8 +390,8 @@ public class BleStatusFragment extends Fragment {
             @Override
             public void onError(String error) {
                 if (!isAdded()) return;
-                btnSync.setEnabled(true);
-                btnUpdateDisplay.setEnabled(true);
+                setButtonEnabled(btnSync, true, COLOR_BLUE);
+                setButtonEnabled(btnUpdateDisplay, true, COLOR_WHITE);
                 btnUpdateDisplay.setText("Update");
                 tvSyncStatus.setText(error);
                 tvSyncStatus.setTextColor(android.graphics.Color.parseColor("#f44336"));

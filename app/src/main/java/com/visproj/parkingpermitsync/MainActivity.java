@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.SwitchCompat;
@@ -271,35 +272,52 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat switchFlip = dialogView.findViewById(R.id.switchFlipDisplay);
         switchFlip.setChecked(currentFlip);
 
-        new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
             .setTitle("Display Settings")
             .setView(dialogView)
-            .setPositiveButton("OK", (d, w) -> {
+            .setPositiveButton("OK", null)
+            .setNegativeButton("Cancel", null)
+            .create();
+
+        dialog.setOnShowListener(d -> {
+            Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            okButton.setOnClickListener(v -> {
                 boolean newFlip = switchFlip.isChecked();
                 if (newFlip != currentFlip) {
                     repository.setDisplayFlipped(newFlip);
-                    // Auto-sync to display when setting changes
+                    // Disable button and show syncing state
+                    okButton.setEnabled(false);
+                    okButton.setAlpha(0.5f);
+                    okButton.setText("Syncing...");
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setAlpha(0.5f);
+
                     BleStatusFragment fragment = pagerAdapter.getBleStatusFragment();
                     if (fragment != null) {
-                        Toast.makeText(this, "Syncing to display...", Toast.LENGTH_SHORT).show();
                         fragment.triggerDisplaySync(new BleStatusFragment.DisplaySyncCallback() {
                             @Override
                             public void onSuccess() {
                                 Toast.makeText(MainActivity.this, "Display settings updated", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
                             }
 
                             @Override
                             public void onError(String error) {
                                 Toast.makeText(MainActivity.this, "Sync failed - setting will apply on next sync", Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
                             }
                         });
                     } else {
                         Toast.makeText(this, "Setting saved - will apply on next sync", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
+                } else {
+                    dialog.dismiss();
                 }
-            })
-            .setNegativeButton("Cancel", null)
-            .show();
+            });
+        });
+
+        dialog.show();
     }
 
     private void openNotificationSettings() {
