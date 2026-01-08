@@ -1,6 +1,6 @@
-# ParkingPermitSync
+# Parking Permit Sync
 
-Android companion app for the [Toronto Parking Permit Display](https://github.com/VisTechProjects/parking_pass_display) ESP32 e-ink project.
+Android companion app for the [parking-permit-display](https://github.com/VisTechProjects/parking-permit-display) ESP32 e-ink project.
 
 ## What It Does
 
@@ -10,8 +10,8 @@ Android companion app for the [Toronto Parking Permit Display](https://github.co
 
 ## Related Projects
 
-- [parking_pass_display](https://github.com/VisTechProjects/parking_pass_display) - ESP32 e-ink firmware
-- [Toronto-Parking-Pass-Buyer](https://github.com/VisTechProjects/Toronto-Parking-Pass-Buyer) - Automated permit purchasing
+- [parking-permit-display](https://github.com/VisTechProjects/parking-permit-display) - ESP32 e-ink firmware
+- [parking-permit-buyer](https://github.com/VisTechProjects/parking-permit-buyer) - Automated permit purchasing
 
 ## Setup
 
